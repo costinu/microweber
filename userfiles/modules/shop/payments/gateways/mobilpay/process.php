@@ -22,10 +22,7 @@ try {
 		'confirmUrl' => $mw_ipn_url,
 		'returnUrl'  => $mw_return_url,
 		'details'    => $place_order['item_name'],
-		'testMode'   => $testMode,
-		'params'     => [
-			'selected_package' => 1
-		]
+		'testMode'   => $testMode
 	] )->send();
 
 	if ( $response->isSuccessful() ) {
@@ -34,13 +31,44 @@ try {
 		$place_order['is_paid']         = 1;
 		$place_order['order_completed'] = 1;
 	} elseif ( $response->isRedirect() ) {
+		/*$place_order['order_completed'] = 1;
+		$place_order['is_paid']         = 0;
+		$place_order['redirect']        = $response->getRedirectUrl();*/
+
 		$place_order['order_completed'] = 1;
 		$place_order['is_paid']         = 0;
-		$place_order['redirect']        = $response->getRedirectUrl();;
 
-		error_log(json_encode($response->getRedirectData()));
-		error_log(json_encode($response->getRedirectResponse()));
+		$rand = uniqid();
+		$form = '<script  type="text/javascript">
+					$(document).ready(function(){
+					 
+					 
+					 $("#gateway_form_' . $rand . '").submit();
+					
+					});
+					</script>';
 
+		//error_log(print_R($response->getRedirectData(), true));
+		$form .= "<p style=\"text-align:center;\"><h2>Please wait, your order is being processed and you";
+		$form .= " will be redirected to the payment website.</h2></p>\n";
+		$form .= "<form method=\"POST\" name=\"gateway_form\" id='gateway_form_{$rand}' ";
+		$form .= "action=\"" . $response->getRedirectUrl() . "\">\n";
+
+		foreach (  $response->getRedirectData() as $key=>$value ) {
+			$form .= "<input type=\"hidden\" name=\"" . $key . "\" value=\"" . $value . "\"/>\n";
+		}
+
+		$form .= "<p style=\"text-align:center;\"><br/><br/>If you are not automatically redirected to ";
+		$form .= "payment website within 5 seconds...<br/><br/>\n";
+		$form .= "<input type=\"submit\" value=\"Click Here\"></p>\n";
+
+		$form .= "</form>\n";
+
+		$place_order['success'] = $form;
+
+		//error_log($form);
+		/*error_log(json_encode($response->getRedirectData()));
+		error_log(json_encode($response->getRedirectResponse()));*/
 	} else {
 		$place_order['error'] = $response->getMessage();
 	}
