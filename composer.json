@@ -27,7 +27,7 @@
     "omnipay/stripe": "~2.0",
     "omnipay/paypal": "~2.0",
     "omnipay/mollie": "3.*",
-    "business-mastery/omnipay-mobilpay": "~1.0",
+    "business-mastery/omnipay-mobilpay": "dev-master",
     "paragonie/random_compat": "1.*",
     "coduo/php-humanizer": "*",
     "omnipay/common": "*",

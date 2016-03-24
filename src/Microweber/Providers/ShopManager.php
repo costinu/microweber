@@ -676,9 +676,11 @@ class ShopManager
         $bits = explode('.', $domainb);
         $idz = count($bits);
         $idz -= 3;
-        if (strlen($bits[ ($idz + 2) ]) == 2) {
-            $url = $bits[ $idz ].'.'.$bits[ ($idz + 1) ].'.'.$bits[ ($idz + 2) ];
-        } elseif (strlen($bits[ ($idz + 2) ]) == 0) {
+        if (0 && isset($bits[ ($idz + 2) ]) && strlen($bits[ ($idz + 2) ]) == 2) {
+            $url = $bits[ $idz ]
+                   .'.'.$bits[ ($idz + 1) ]
+                   .'.'.$bits[ ($idz + 2) ];
+        } elseif ($bits[ ($idz + 2) ] && strlen($bits[ ($idz + 2) ]) == 0) {
             $url = $bits[ ($idz) ].'.'.$bits[ ($idz + 1) ];
         } else {
             $url = $bits[ ($idz + 1) ].'.'.$bits[ ($idz + 2) ];
